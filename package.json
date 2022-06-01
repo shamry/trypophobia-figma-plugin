@@ -1,0 +1,18 @@
+{
+  "name": "Trypophobia Detector",
+  "version": "1.0.0",
+  "description": "Your Figma Plugin",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.44.0",
+    "typescript": "*"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Trypophobia Detector",
+  "id": "1098907953324241376",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": [
+    "figma"
+  ],
+  "ui": "ui.html"
+}

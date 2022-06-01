@@ -1,0 +1,88 @@
+<link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+<style>
+  body {
+    background-size: 500px, 500px;
+  }
+</style>
+
+<button style="background-color: #000000; border: none;
+color: white;
+padding: 5% 5%;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-size: 16px;
+cursor: pointer;
+width: 100%;
+margin-top: 430px;
+border-radius: 5px;" onclick="sendToAPI()">Upload Image for Prediction</button>
+
+<h1 style="color: rgb(0, 0, 0);
+text-align: center;
+width: 100%;
+position: absolute;
+top: 0px;
+left: 0px;
+padding-top: 200px;
+padding-bottom: 175px;
+background-color: #ffffff;
+/* font-family: Arial, Helvetica, sans-serif; */
+font-family: 'Poppins';font-size: 22px;
+" id="result">High (23%)</h1>
+
+
+<script>
+  let image = null
+  let imageData = null
+
+  function sendToAPI() {
+    if (imageData != null) {
+      parent.postMessage({ pluginMessage: { type: 'detect', data: image } }, '*')
+    }
+
+  }
+  onmessage = (event) => {
+    let msgType = event.data.pluginMessage.type
+    let msg = event.data.pluginMessage
+
+    if (msgType === 'exportImage') {
+      imageData = msg.data
+      document.getElementById("result").style.display = "none"
+      document.getElementById("result").innerHTML = ""
+      image = `data:image/png;base64,` + btoa(String.fromCharCode.apply(null, imageData))
+      document.body.style.backgroundImage = `url(${image})`;
+    }
+
+    if (msgType === 'detect') {
+      uploadImage(imageData)
+    }
+
+    if (msgType === "display"){
+      const resultData = msg.data
+      document.getElementById("result").style.display = "block"
+      document.getElementById("result").innerHTML = resultData.percentage + "<br>" + "<br>" + resultData.info
+    }
+  }
+
+  function uploadImage(data) {
+    const blob = data 
+    const img = new File([blob], 'trypo.png', {type:"image/png", lastModified:new Date()});
+    var formData = new FormData()
+    formData.append('frame', img)
+
+    fetch('http://127.0.0.1:5000/predict',
+      {
+        method: 'POST',
+        body: formData
+      }).then(
+        response => response.json() // if the response is a JSON object
+      ).then(
+        success => {
+          parent.postMessage({ pluginMessage: { type: 'result', data: success.response } }, '*')
+        } // Handle the success response object
+      ).catch(
+        error => console.log(error) // Handle the error response object
+      );
+  }
+
+</script>
